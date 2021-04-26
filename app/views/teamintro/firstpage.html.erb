@@ -1,0 +1,514 @@
+<!doctype html>
+<html lang="ko">
+	<head>
+		<meta charset="UTF-8">
+		<title>OUR Team</title>
+		
+<style>	/*CSS*/
+	body {text-align: center;
+}
+	.slide_time{  
+		position:absolute;  z-index:1004;  width: 70px;  height: 70px;  right: -85px;  top: 15px;  transform: skewX(10deg);
+	}
+	
+	.slider_container:after{	
+		content:"";	position:absolute;	height:500px;	left:0;	right:0;	background-color:#000;	top:0;	z-index:-100;
+	}
+	.slide_time #inner{ 
+		stroke-dasharray: 200; stroke-dashoffset: 0; stroke: #fff; opacity: 0.4;
+	}
+	.slide_time #outer{  
+		stroke: #fff;  opacity: 0.2;
+	}
+	.slide_time svg{  
+		stroke-width: 2px;  width: 100%;  height: 100%;  transform: rotate(-90deg);
+	}
+	.slide_time .pause:after{  
+		content:"\e84e";
+	}
+	.slide_time .play:after{  
+		content:"\e84d";  margin-left: 3px;
+	}
+	.slide_time a{  
+		position: absolute;  top: 0;  right: 0;  bottom: 0;  left: 0;  text-align: center;  line-height: 70px;
+	}
+	.slide_time a:after{
+		font-family:lgsports_icon;color: #fff;font-size: 16px;
+	}
+	#slider {  
+		width: 976px;  height: 500px;  margin: 0 auto;  transform: skew(-10deg,0);  background-color: #555;  position: relative;
+	}
+	.slider_wrap {  
+		position: relative;  height: 500px;
+	}
+	.slider_wrap .slider_list {  
+		position: absolute;  height: 600px;  box-sizing: border-box;  overflow: hidden;  transition: transform 0.5s,top 0.5s;
+	}
+	.slider_wrap .slider_list .txt_wrap{  
+		position:absolute;  top: 140px;  left: 100px;  text-align: left;  width: 370px;  opacity:0;  transform: translateX(-100px);  transition: all 1.5s;  z-index: 100;
+	}
+	.slider_wrap .slider_list .txt_wrap.right {  
+		left: auto;  text-align:right;  right:100px;  transform: translateX(-100px);
+	}
+	.slider_wrap .slider_list.on .txt_wrap{  
+		opacity: 1;  transform: translateX(0px);
+	}
+	.slider_wrap .slider_list .txt_wrap .group{  
+		margin-bottom: 15px;  color: #ddd;  border-bottom: 1px solid #777;  display: inline-block;
+	}
+	.slider_wrap .slider_list.on .txt_wrap .group{}.slider_wrap .slider_list .txt_wrap .title{  
+		font-size: 35px;  color:#fff;  line-height: 47px;  /* margin-bottom: 10px; */  max-height: 140px;  overflow: hidden;  word-break: keep-all;  text-shadow: 1px 1px 10px rgba(0, 0, 0, 1);  text-overflow: ellipsis;  -webkit-line-clamp: 3;  display: -webkit-box;  -webkit-box-orient: vertical;
+	}
+	.slider_wrap .slider_list.on .txt_wrap h2.linkout + .link_btn:after {	
+		content:"\e851";	font-family:lgsports_icon;	font-size:12px;	color:#fff;	margin-left:6px;
+	}
+	.slider_wrap .slider_list .txt_wrap .link_btn{  
+		color: #fff;  background-color: #a50034;  padding: 6px 13px;  z-index: 22;  font-size: 13px;  position: absolute;  left: 0;  margin-top: 10px;
+	}
+	.slider_wrap .slider_list .txt_wrap .link_btn:hover {	 
+		background-color: #a10034;
+	}
+	.slider_wrap .slider_list .txt_wrap.right .link_btn{  
+		left:auto;  right:0;
+	}
+	.slider_wrap .slider_list:before {  
+		content: "";  width: 100%;  position: absolute;  height: 100%;  background-color: #777;  z-index: 9;  opacity: 0.85;  transition: all 0.5s;
+	}
+	.slider_wrap .slider_list:after{   
+		content: "";   width: 100%;   position: absolute;   height: 100%;   background: linear-gradient(-90deg, rgba(0, 0, 0, 0.5) 0%,rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0.5) 100%);   z-index: 10;
+	}
+	.slider_wrap .slider_list.on:before { 
+		content: "";  width: 100%;  position: absolute;  height: 100%;  background: none;
+	}
+	.slider_wrap .slider_list img {  
+		position: absolute;  left: -5%;  right: -5%;  width: 112%;  margin: 0 auto;  display: block;  transform: skew(10deg,0);  text-align: center;
+	}
+	.slider_wrap .slider_list.on {  
+		z-index: 100;  background-color: #000;
+	}
+	.slider_wrap + .move_btn {  
+		position: absolute;  z-index: 1005;  top: 40%;  left: 0;  right: 0;  height: 40px;  transform: skew(10deg);  width: 100%;
+	}
+	@media screen and (max-width: 1300px) {    
+		.move_btn #prev_btn{        
+			left: -60px;    
+		}    
+		.move_btn #next_btn{        
+			right: -60px;    
+		}
+	}
+	.move_btn a:before{  
+		color:#aaa;  font-size:40px
+	}
+	.move_btn a:hover:before {	
+		color:#fff;
+	}
+	#next_btn {  
+		position: absolute;  display: inline-block;  z-index: 1000;  right: -170px;  text-indent: 0;
+	}
+	#next_btn:before{  
+		content:"\e80d";  font-family:lgsports_icon;
+	}
+	#prev_btn {  
+		display: inline-block;  position: absolute;  left: -170px;  text-indent: 0;
+	}
+	#prev_btn:before{ 
+		content:"\e80e";  font-family:lgsports_icon;
+	}
+	.slider_container {  
+		position: relative;  width: 100%;  overflow: hidden;  height: 550px;  top: 0;  z-index: 2;  background: linear-gradient(to bottom, rgba(107,107,107,1) 0%, rgba(255,255,255,0.33) 67%, rgba(255,255,255,0) 100%);
+	}
+	.slider_bg {  
+		height: 490px;  width: 100%;  background: #000;  position: absolute;  z-index: -1000;
+	}
+	.event_notice{  
+		position: relative;  z-index: 105;  right: 0;  bottom: 0;  text-align: right;  /* display: none; */  height: 100px;  margin-top: -97px;
+	}
+	.event_wrap {  width: 1200px;  margin: 0 auto;  height: 100px;  cursor: pointer;  position:relative;
+	}
+	.event_notice ul {	position:absolute;	right:0;	bottom:0;
+	}
+	.event_notice li {	position:relative;	top:30px;	right:30px;	display: inline-block;	margin-left: -20px;	animation: bannerIn 0.5s ease-out 3s forwards;	opacity: 0;
+	}
+	.event_notice li a {	display:block;
+	}
+	.event_notice li:nth-child(1) {
+		animation-delay:2s;
+	}
+	.event_notice li:nth-child(2) {
+		animation-delay:2.2s;
+	}
+</style>
+</head>
+		
+<body>
+	<div class="body_wrap main">
+		<div class="spinner_wrap"></div>
+		<div class="slider_container">
+			<div id="slider">
+				<div class="slide_time">
+					<svg>
+						<circle id="outer" cx="35" cy="35" r="18" fill="none" />
+					    <circle id="inner" cx="35" cy="35" r="18" fill="none" />
+					</svg>
+					<a id="autoPlay" href="javascript:void(0);" class="pause"></a>
+				</div>
+				<ul class="slider_wrap">
+					
+						
+							
+								<!-- 트윈스포토 -->
+								<li class="slider_list" onclick="javascript:openStoryPhotoDetail('2841');">::before
+									<img src="<%= asset_path 'baseball1.jpg' %>">
+									<div class="txt_wrap right">
+										<p class="group">Twins Photo</p>
+										<h2 class="title">7월31일 잠실 한화전, 선발 켈리 7이닝 1실점으로 호투</h2>
+									</div>
+									::after
+								</li>
+							
+							
+							
+							
+						
+					
+						
+							
+								<!-- 트윈스포토 -->
+								<li class="slider_list" onclick="javascript:openStoryPhotoDetail('2840');">::before
+									<img src="<%= asset_path 'baseball2.jpg' %>">
+									<div class="txt_wrap right">
+										<p class="group">Twins Photo</p>
+										<h2 class="title">7월28~30일 문학 SK전, 스윕승하며 팀 4연승 질주</h2>
+									</div>
+									::after
+								</li>
+							
+							
+							
+							
+						
+					
+						
+							
+								<!-- 트윈스포토 -->
+								<li class="slider_list" onclick="javascript:openStoryPhotoDetail('2835');">::before
+									<img src="<%= asset_path 'baseball3.jpg' %>">
+									<div class="txt_wrap right">
+										<p class="group">Twins Photo</p>
+										<h2 class="title">7월26일 잠실 두산전, 트윈스 영건들의 호투로 4대3 승리</h2>
+									</div>
+									::after
+								</li>
+							
+							
+							
+							
+						
+					
+						
+							
+								<!-- 트윈스포토 -->
+								<li class="slider_list" onclick="javascript:openStoryPhotoDetail('2834');">::before
+									<img src="<%= asset_path 'parkchanho61.jpg' %>">
+									<div class="txt_wrap right">
+										<p class="group">Twins Photo</p>
+										<h2 class="title">7월25일 잠실 두산전, 3대7</h2>
+									</div>
+									::after
+								</li>
+							
+							
+							
+							
+						
+					
+						
+							
+								<!-- 트윈스포토 -->
+								<li class="slider_list" onclick="javascript:openStoryPhotoDetail('2833');">::before
+									<img src="<%= asset_path 'baseball4.jpg' %>">
+									<div class="txt_wrap ">
+										<p class="group">Twins Photo</p>
+										<h2 class="title">7월24일 잠실 두산전, 임찬규와 김현수의 활약으로 8대1 승리</h2>
+									</div>
+									::after
+								</li>
+							
+							
+							
+							
+						
+					
+				</ul>
+				<div class="move_btn">
+					<a href="#" id="prev_btn"></a>
+						
+					<a href="#" id="next_btn"></a>
+				</div>
+			</div>
+		</div>
+</body>
+
+	
+</html>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+
+$(document).ready(function() {
+	init_page();
+});
+$(window).resize(function(setting) {
+	// init_page();
+});
+function init_page() {
+	var setting = {
+		current_inx : 0,
+		total_inx : $('.slider_list').length,
+		width : $('#slider').outerWidth(),
+		height : $('#slider').outerHeight()
+	};
+	slider(setting);
+
+}
+function slider(init) {
+	var ele = $("#inner");
+	var delay;
+	$('#slider').outerWidth(init.width);
+	$('.slider_wrap').outerWidth(init.width);
+	$('.slider_list').outerWidth(init.width);
+	$('.slider_list').eq(0).addClass('on');
+	for (var i = 0; i < init.total_inx; i++) {
+		// console.log(init.current_inx);
+		$('.slider_list').eq(i).css({
+			"left" : i * init.width,
+			'width' : init.width,
+			"height" : init.height,
+			"transform":"scale(1)"
+		});
+
+	}
+	if ($('.slider_list').length < 2) {
+
+	}else if($('.slider_list').length < 3) {
+		$('#prev_btn').hide();
+	}else{
+		$('#next_btn').show();
+	$('.slider_list').eq(init.total_inx - 1).css({
+		"left" : -1 * init.width
+	});
+	if ($('.slider_list').length < 3) {
+		$('.slider_list').eq(init.total_inx - 1).css({
+			"left" : 1 * init.width
+		});
+	}
+	}
+	$('.slider_list').eq(init.current_inx).css({
+		'width' : init.width,
+		"height" : init.height,
+		"opacity" : "1",
+		"transform":"scale(1.2)"
+	});
+
+	function next() {
+		$('.slider_list').finish();
+		init.current_inx = init.current_inx + 1;
+		if (init.current_inx > init.total_inx - 1) {
+			init.current_inx = 0;
+		}
+		$('.slider_list').removeClass('on');
+		$('.slider_list').eq(init.current_inx).addClass('on');
+		for (var i = 0; i < init.total_inx; i++) {
+
+			var p = $('.slider_list').eq(i);
+			var position = p.css("left");
+			position = position.replace("px", "");
+			position = parseInt(position);
+			if (position < -init.width * (init.total_inx - 3)) {
+				$('.slider_list').eq(i).css({
+					"z-index" : "-10",
+					"left" : init.width * 2,
+					'width' : init.width,
+					"height" : init.height,
+					"margin-left" : "0px",
+					"transform":"scale(1)"
+				}).animate({
+					"left" : init.width
+				});
+			}
+
+			else {
+				$('.slider_list').eq(i).css({
+					"z-index" : "-10",
+					"transform":"scale(1)"
+				});
+				$('.slider_list').eq(i).stop().animate({
+					"left" : position - init.width,
+					'width' : init.width,
+					"height" : init.height
+
+				}, function() {
+					$('.slider_list').eq(init.current_inx).css({
+						"z-index" : "10",
+						"transform":"scale(1.2)"
+					});
+				});
+			}
+
+		}
+	}
+	function prev() {
+		$('.slider_list').finish();
+		init.current_inx = init.current_inx - 1;
+		if (init.current_inx < 0) {
+			init.current_inx = init.total_inx - 1;
+		}
+		$('.slider_list').removeClass('on');
+		$('.slider_list').eq(init.current_inx).addClass('on');
+		for (var i = 0; i < init.total_inx; i++) {
+			// console.log(init.current_inx);
+			var p = $('.slider_list').eq(i);
+			var position = p.css("left");
+			position = position.replace("px", "");
+			position = parseInt(position);
+			if (position > init.width * (init.total_inx - 3)) {
+				console.log(i);
+				$('.slider_list').eq(i).css({
+					"z-index" : "-10",
+					"left" : -init.width * 2,
+					'width' : init.width,
+					"height" : init.height,
+					"transform":"scale(1)"
+				}).animate({
+					"left" : -init.width,
+				});
+			} else {
+				$('.slider_list').eq(i).css({
+					"z-index" : "-10",
+					"transform":"scale(1)"
+				});
+				$('.slider_list').eq(i).stop().animate({
+					"left" : position + init.width,
+					'width' : init.width,
+					"height" : init.height,
+					"margin-left" : "0px"
+				}, function() {
+					$('.slider_list').eq(init.current_inx).css({
+						"z-index" : "10",
+						"transform":"scale(1.2)"
+					});
+				});
+			}
+		}
+	}
+	//auto slide
+	var id;
+	function animate(opts) {
+		  var start = new Date
+		  id = setInterval(function() {
+		    var timePassed = new Date - start
+		    var progress = timePassed / opts.duration
+
+		    if (progress > 1){
+
+		    	progress = 1
+		    }
+		    var delta = opts.delta(progress)
+		    opts.step(delta)
+
+		    if (progress == 1) {
+		    	clearInterval(id);
+
+		    	next();
+		    	move(ele, circ, 7000);
+
+		    }
+
+		  }, opts.delay || 10);
+
+
+
+		}
+		function circ(progress) {
+		  return progress;
+		}
+
+		function move(element, delta, duration) {
+		$('.slide_time').show();
+		  var to = -120
+		  animate({
+		    element:element,
+		    delay: 10,
+		    duration: duration || 3000,
+		    delta: delta,
+		    step: function(delta) {
+		      $(element).css({
+		        "stroke-dashoffset":to*delta
+
+		      });
+
+		    }
+		  })
+		}
+		if ($('.slider_list').length < 2) {
+			$('.slide_time').hide();
+			$('.move_btn').hide();
+		}else{
+			$('.slide_time').show();
+			$('.move_btn').show();
+			move(ele, circ, 7000);
+		}
+	  $('#next_btn').click(function() {
+			clearInterval(id);
+			$('#autoPlay').removeClass('pause');
+			$('#autoPlay').addClass('play');
+			$(ele).css({
+		        "stroke-dashoffset":0
+		     });
+			next();
+
+		});
+		$('#prev_btn').click(function() {
+			clearInterval(id);
+			$('#autoPlay').removeClass('pause');
+			$('#autoPlay').addClass('play');
+			$(ele).css({
+		        "stroke-dashoffset":0
+		     });
+			prev();
+		});
+
+	$('#autoPlay').click(function(){
+		if($(this).hasClass('pause')){
+			$(ele).css({
+		        "stroke-dashoffset":0
+		     });
+			$(this).removeClass('pause');
+			$(this).addClass('play');
+			clearInterval(id);
+
+		}
+		else{
+			$(this).removeClass('play');
+			$(this).addClass('pause');
+			move(ele, circ, 7000);
+
+		}
+	});
+
+}
+
+
+</script>
+
+
+
+
+
+
+
+
+
+
+

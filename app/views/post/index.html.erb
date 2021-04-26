@@ -1,0 +1,45 @@
+<style>
+	.keijiban{
+		text-align:center;
+		
+	}
+	.write_post{
+		text-align:right;
+	}
+	body{
+		background-image:url("https://png.pngtree.com/thumb_back/fw800/back_our/20190620/ourmid/pngtree-hand-painted-character-baseball-sport-sports-poster-background-material-image_163207.jpg");
+		/*background-repeat: no-repeat;*/
+	}
+</style>
+<body>
+	
+
+
+<div class="keijiban" style="color:black;">
+<h1>掲示板</h1><br>
+	<div class="write_post">
+<%=link_to "ポストを書く", post_path %>
+		</div>
+<hr>
+<% @posts_index.each do |p| %>
+	<div class="keijiban_wrap">
+<table class="sub_news" border="2" cellspacing="1" summary="게시판 글제목 리스트" style="margin-left:400px;">
+
+<colgroup>
+<col>
+<col width="500">
+<col width="4000">
+</colgroup>
+<thead>
+<tr>
+<th scope="col"> NO <%=p.id%></th>
+<th scope="col"><a href="/selectedPost/<%= p.id %>">Title<br><%= p.title %><br></a>
+<!--       <th>작성자</th>         -->
+</th>
+</thead>
+</table>
+       
+       <% end %><br>  
+		</div>
+</div>
+<%=link_to "Back", root_path %>

@@ -1,0 +1,14 @@
+updateComment_form.erb
+
+댓글 작성 Form태그 페이지<br> 댓글내용			글쓰기 폼태그 복붙해서 좀 만 수정하면 됨
+<%=@comment.each do |a|%>
+<p>Co No.<%=a.id %></p>
+<form action="/updateComment/<%= a.id %>" method="post">
+    <input type="hidden" name="id" value="<%=a.id %>">
+내용 : <textarea name="content"><%=a.content %></textarea>
+        <input type="submit" onclick="alert('Comment Update success');"/>
+<%end%>
+
+<br><br><br>
+
+<a href='/index'>Back</a>      

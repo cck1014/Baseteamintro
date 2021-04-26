@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<style>
+		body{
+			
+			align-items:center;
+			height:100vh;
+			background-image:url("https://t1.daumcdn.net/cfile/tistory/224A1C4A57F50CEF17")/*no-repeat center*/;
+			background-size:cover;
+		}	
+	span { display: table-cell; padding-left: 10px; text-align: left; /*vertical-align: middle;*/ }
+	.data_api { height: 20px; } span { line-height: 20px; /*vertical-align: middle;*/ }
+</style>
+	
+
+<title>API 연습</title>
+</head>
+	<body>
+		<input id="name_part" value="" type="text" placeholder="選手の名前を入力"><button id="search">検索</button>	<!--첫번째 API 선수정보검색하는 함수-->				
+		<input id="season_part" value="" type="text" style="margin-left:120px;" placeholder="season入力"><input id="player_id_part" value="" type="text" placeholder="PlayerId入力"><button id="season_playerID_search">検索</button>	<!--두번째 API 시즌,플레이어 아이디로 검색해서 정보 가져오는 곳-->
+		<input id="season_hitting_stats_gametype_search" value="" type="text" style="margin-left:50px;" placeholder="GameType入力"><input id="season_hitting_stats_season_search" value="" type="text" placeholder="Season入力"><input id="season_hitting_stats_playerID_search" value="" type="text" placeholder="PlayerId入力"><button id="season_playerID_search">検索</button><!--세번째 API 시즌타격스텟 검색하는 함수-->
+		
+		<div id="data_api">
+		<span id="player_Info"></span><span id="season_playerID"></span>
+		<span id="season_hitting_stats"></span>
+	</div>
+	<!--제이쿼리cdn인데 https://code.jquery.com/ 에 들어가서 uncompressed들어가서 복사	-->	
+	<script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script>
+	<script>//html안에서 자바스크립트 쓰려면 <javascript>써줘야됨
+		
+		$.ajax({
+  			method: "GET",										
+  			url: "https://lookup-service-prod.mlb.com/json/named.search_player_all.bam?sport_code='mlb'&name_part='ichiro%25'",
+  			data: { name_part:"{name_part}" },
+			headers: {Authorization: "Content-Type 82c34aef5ad34b8db766b6c85df1cafa"},
+			//success :function(res){
+			//console.log(res.html);
+		//}
+
+		})
+  			.done(function( msg ) {
+			console.log(msg);//개발자도구에 데이터를 표시시키기 위해
+    		//console.log(msg.documents[0].title);
+			//console.log(msg.documents[0].thumbnail);
+			//alert( "Data Saved: " + msg );
+	$( "#player_Info" ).append( "<br><strong style='color:white'>" + "選手名前　　：　" + msg.search_player_all.queryResults.row.name_display_first_last + " ( " + 			      			msg.search_player_all.queryResults.row.player_id + " ) " + "</strong>" + "<br>" );
+	$( "#player_Info" ).append( "<strong style='color:white'>" + "ポジション　：　" + msg.search_player_all.queryResults.row.position + "</strong>" + "<br>" );
+	$( "#player_Info" ).append( "<strong style='color:white'>" + "Team　　　：　" + msg.search_player_all.queryResults.row.team_full + "</strong>" + "<br>" );
+	$( "#player_Info" ).append( "<strong style='color:white'>" + "Throws　　：　" + msg.search_player_all.queryResults.row.throws + "</strong>" + "<br>" );		
+	$( "#player_Info" ).append( "<strong style='color:white'>" + "bat　　　　 ：　" + msg.search_player_all.queryResults.row.bats + "</strong>" + "<br>" );
+			//$( "p" ).append( "<img src='"+msg.documents[0].thumbnail+"'/>" );			
+  		});
+	
+		
+		
+		
+		
+		
+		
+		//첫번째. 검색버튼 누르면 나오게 하는 거 함수작성
+		$(document).ready(function()	{
+			$("#search").click(function()	{
+				let requestUrl = "https://lookup-service-prod.mlb.com/json/named.search_player_all.bam?sport_code='mlb'&name_part=";
+				// const sportCode = "'mlb'"
+				const name = "'"+$("#name_part").val()+"%25'";
+				requestUrl += name;
+				
+				// console.log(requestUrl);
+				$.ajax({
+					method:"get",																			
+					url: requestUrl,
+					// url:"https://lookup-service-prod.mlb.com/json/named.search_player_all.bam?sport_code='mlb'&name_part='Darvish%25'",
+					// url: "https://lookup-service-prod.mlb.com/json/named.search_player_all.bam",
+					// data:{sport_code:sportCode,name_part:name},
+					headers: {Authorization: "Content-Type 82c34aef5ad34b8db766b6c85df1cafa"}
+				})
+				.done(function(msg)	{
+					console.log(msg);//개발자도구에 데이터를 표시시키기 위해
+    		//console.log(msg.documents[0].title);
+			//console.log(msg.documents[0].thumbnail);
+			//alert( "Data Saved: " + msg );
+	// $( "p" ).append( "<strong style='color:grey'>" + "選手名前　：　" + msg.search_player_all.queryResults.row.name_display_first_last + "</strong>"+"<br>" );
+				if(jQuery.type(msg.search_player_all.queryResults.row)	=== "array"){	//검색결과가 동명이인이 여러명일 경우 출력
+					$.each(msg.search_player_all.queryResults.row, function(index, row){
+						$( "#player_Info" ).append( "<strong style='color:orange'>" + 
+									 	 "<名前> :" + row.name_display_first_last + " ( " + row.player_id + " ) " +
+										 "<br><ポジション> : " + row.position + 
+										 "<br><チーム> : "+ row.team_full + 
+										 "<br><投> : " +  row.throws + 
+										 "<br><打> " + row.bats +  
+										 "</strong>"+"<br>" + "<br>" + "<br>" );	
+					});
+				} 
+					
+					else {															//검색결과가 사람 한명일 경우의 출력
+					$( "#player_Info" ).append( "<strong style='color:yellow'>" + 
+									 "<名前> : " + msg.search_player_all.queryResults.row.name_display_first_last + " ( " + msg.search_player_all.queryResults.row.player_id + ")" +
+									 "<br><ポジション> : " + msg.search_player_all.queryResults.row.position + 
+									 "<br><チーム> : " + msg.search_player_all.queryResults.row.team_full + 
+									 "<br><投> : " + msg.search_player_all.queryResults.row.throws + 
+									 "<br><打> : " + msg.search_player_all.queryResults.row.bats + 
+									 "</strong>"+"<br>" + "<br>" + "<br>");	
+				}
+			})
+		})
+		})
+		
+		
+		
+		//두번째 고정된 변수
+		$.ajax({
+  			method: "GET",										
+  			url: "https://lookup-service-prod.mlb.com/json/named.player_teams.bam?season='2016'&player_id='400085'",
+  			data: { name_part:"{season_part}", player_id_part:"{player_id_part}" },
+			headers: {Authorization: "Content-Type 82c34aef5ad34b8db766b6c85df1cafa"},
+
+
+		})
+  			.done(function( msg ) {
+			console.log(msg);//개발자도구에 데이터를 표시시키기 위해
+    //$( "#season_playerID" ).append( "<br><br><br><br><br><strong style='color:white'>" + "　　：　"  + " ( " +  " ) " + "</strong>" + "<br>" );
+	$( "#season_playerID" ).append( "<br><strong style='color:white'>" + "Team　：　" + msg.player_teams.queryResults.row.team + "</strong>" + "<br>" );
+	$( "#season_playerID" ).append( "<strong style='color:white'>" + "Back Number　　：　" + msg.player_teams.queryResults.row.jersey_number + "</strong>" + "<br>" );
+	$( "#season_playerID" ).append( "<strong style='color:white'>" + "Position　　：　" + msg.player_teams.queryResults.row.primary_position + "</strong>" + "<br>" );		
+	$( "#season_playerID" ).append( "<strong style='color:white'>" + "League　　 ：　" + msg.player_teams.queryResults.row.league_full + "</strong>" + "<br>" );
+  		});
+		
+		
+		//두번째. 검색버튼 누르면 나오게 하는 거 함수작성
+		$(document).ready(function()	{
+			$("#season_playerID_search").click(function()	{
+				//let requestUrl = "https://lookup-service-prod.mlb.com/json/named.player_teams.bam?season={season}&player_id={player_id}";
+				const season = $("#season_part").val();
+				const player_id = $("#player_id_part").val();
+				//requestUrl = requestUrl + season + player_id;
+				$.ajax({
+					method:"get",																			
+					url: "https://lookup-service-prod.mlb.com/json/named.player_teams.bam?season={season}&player_id={player_id}",
+					data: { season:"{season}", player_id:"{player_id}"},
+					headers: {Authorization: "Content-Type 82c34aef5ad34b8db766b6c85df1cafa"}
+				})
+				.done(function(msg)	{
+					console.log(msg);//개발자도구에 데이터를 표시시키기 위해
+    $( "#season_playerID" ).append( "<strong style='color:white'>" + "選手名前　　：　"  + " ( " +  " ) " + "</strong>" + "<br>" );
+	$( "#season_playerID" ).append( "<strong style='color:white'>" + "Team　：　" + msg.player_teams.queryResults.row.team + "</strong>" + "<br>" );
+	$( "#season_playerID" ).append( "<strong style='color:white'>" + "Back Number　　　：　" + msg.player_teams.queryResults.row.jersey_number + "</strong>" + "<br>" );
+	$( "#season_playerID" ).append( "<strong style='color:white'>" + "Position　　：　" + msg.player_teams.queryResults.row.primary_position + "</strong>" + "<br>" );		
+	$( "#season_playerID" ).append( "<strong style='color:white'>" + "League　　　　 ：　" + msg.player_teams.queryResults.row.league_full + "</strong>" + "<br>" );
+					
+							})
+		})
+		})
+		
+		
+		//세번째 고정된 변수
+		$.ajax({
+  			method: "GET",										
+  			url: "https://lookup-service-prod.mlb.com/json/named.sport_hitting_tm.bam?league_list_id='mlb'&game_type='R'&season='2017'&player_id='493316'",
+  			data: { season_hitting_stats_gametype_search:"{season_hitting_stats_gametype_search}", 
+				   season_hitting_stats_season_search:"{season_hitting_stats_season_search}",
+				  season_hitting_stats_playerID_search:"{season_hitting_stats_playerID_search}"},
+			headers: {Authorization: "Content-Type 82c34aef5ad34b8db766b6c85df1cafa"},
+
+
+		})
+  			.done(function( msg ) {
+			console.log(msg);//개발자도구에 데이터를 표시시키기 위해
+    $( "#season_hitting_stats" ).append( "<br><strong style='color:white'>" + "team_full　：　" + msg.sport_hitting_tm.queryResults.row.team_full + "</strong>" + "<br>" );
+	$( "#season_hitting_stats" ).append( "<strong style='color:white'>" + "league_full　　：　" + msg.sport_hitting_tm.queryResults.row.league_full + "</strong>" + "<br>" );
+	$( "#season_hitting_stats" ).append( "<strong style='color:white'>" + "season　　：　" + msg.sport_hitting_tm.queryResults.row.season + "</strong>" + "<br>" );		
+	$( "#season_hitting_stats" ).append( "<strong style='color:white'>" + "sport_code　　 ：　" + msg.sport_hitting_tm.queryResults.row.sport_code + "</strong>" + "<br>" );
+  		});
+</script>
+		
+		
+
+</body>
+</html>
